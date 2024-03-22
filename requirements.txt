@@ -1,0 +1,8 @@
+numpy==1.26.4
+sympy==1.12
+torch==2.2.1
+torchvision==0.17.1
+torcheval==0.0.7
+pycddlib==2.1.7  # this dependency is optional, needed only for Vertex Head
+matplotlib  # only for notebooks
+tqdm
