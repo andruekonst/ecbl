@@ -71,8 +71,8 @@ model = torch.nn.Sequential(
 
 preds = model(X)
 # preds["<concept name>"] is a probability distribution of the concept
-assert preds['y_0'].shape[1] = 2
-assert preds['y_3'].shape[1] = 3
+assert preds['y_0'].shape[1] == 2
+assert preds['y_3'].shape[1] == 3
 
 # the neural network can be optimized through `concepts_head`
 ```
