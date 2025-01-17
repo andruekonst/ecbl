@@ -72,8 +72,8 @@ def cnf_to_constraints(cnf, concepts, concept_proba_index_lookup=None):
                 assert isinstance(eq, Eq)
                 symb, value = eq.args
                 A[i, concept_proba_index_lookup[(str(symb), int(value))]] = 1
-        elif isinstance(eq, Eq):
-            symb, value = eq.args
+        elif isinstance(part, Eq):
+            symb, value = part.args
             A[i, concept_proba_index_lookup[(str(symb), int(value))]] = 1
         else:
             raise ValueError(f'Wrong part of CNF: {part}')

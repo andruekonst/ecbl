@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "ecbl"
-version = "0.1.0"
+version = "1.0.0"
 description = ""
 authors = ["Andrei V. Konstantinov"]
 license = "MIT"
@@ -17,9 +17,9 @@ pandas = "^2.1.4"
 numpy = "^1.26.2"
 matplotlib = "^3.8.2"
 sympy = "1.12"
-torchvision = "0.17.1"
+torchvision = ">= 0.17.1"
 torcheval = "0.0.7"
-pycddlib = "2.1.7"
+# pycddlib = "2.1.7"
 tqdm = "4.66.2"
 
 [build-system]
