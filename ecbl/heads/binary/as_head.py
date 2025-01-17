@@ -61,7 +61,8 @@ class BinaryAdmissibleStatesHead(torch.nn.Module):
         n_total_states = 2 ** len(self.concepts_order)
         placement_matrix = torch.zeros((n_valid_states, n_total_states), dtype=torch.float)
         placement_matrix[torch.arange(n_valid_states), valid_states] = 1.
-        self.placement_matrix = placement_matrix
+        # self.placement_matrix = placement_matrix
+        self.register_buffer('placement_matrix', placement_matrix)
 
     def forward(self, x: torch.Tensor) -> BinaryConceptsProbas:
         valid_states_distribution = torch.softmax(self.linear(x), dim=1)

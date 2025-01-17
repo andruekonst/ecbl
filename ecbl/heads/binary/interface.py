@@ -6,6 +6,7 @@ from ..interface import Rules, Concepts, ConceptsProbas
 
 BinaryConcepts = List[str]
 BinaryConceptsProbas = torch.Tensor
+BinaryConceptsProbasNumpy = np.ndarray
 
 
 class BinaryConceptsHead(Protocol):
