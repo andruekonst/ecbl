@@ -28,10 +28,15 @@ def linear_inequalities_to_vertex_repr(A: np.ndarray, b: np.ndarray) -> Tuple[np
     _check_cdd()
     # A x <= b then H = [b | -A]
     h_representation = np.concatenate((b[:, np.newaxis], -A), axis=1)
-    h_mat = cdd.Matrix(h_representation.tolist(), linear=False)
-    h_mat.rep_type = cdd.RepType.INEQUALITY
-    poly = cdd.Polyhedron(h_mat)
-    v_representation = np.array(poly.get_generators()[:])
+    # h_mat = cdd.Matrix(h_representation.tolist(), linear=False)
+    h_mat = cdd.matrix_from_array(h_representation.tolist(), rep_type=cdd.RepType.INEQUALITY)
+    # h_mat.rep_type = cdd.RepType.INEQUALITY
+    # poly = cdd.Polyhedron(h_mat)
+    poly = cdd.polyhedron_from_matrix(h_mat)
+    # v_representation = np.array(poly.get_generators()[:])
+    # ext = cdd.copy_generators(poly)
+    ext = cdd.copy_output(poly)
+    v_representation = np.array(ext.array)
     # [t | V]
     t = v_representation[:, 0]
     V = v_representation[:, 1:]

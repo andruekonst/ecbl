@@ -19,7 +19,7 @@ matplotlib = "^3.8.2"
 sympy = "1.12"
 torchvision = ">= 0.17.1"
 torcheval = "0.0.7"
-# pycddlib = "2.1.7"
+pycddlib = "3.0.2"
 tqdm = "4.66.2"
 
 [build-system]
