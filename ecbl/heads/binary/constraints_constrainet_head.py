@@ -10,7 +10,7 @@ from ...constraints.polytope_conversions import linear_inequalities_to_vertex_re
 from ...utils import log_duration
 from .constraints import make_sparse_A
 from .constraints_softmax_head import make_A_b_binary
-from constrainet import LinearConstraints, ConstraiNetLayer
+from constrainet import LinearConstraints, ConstraiNetLayer, make_constraint_set
 
 
 class ConstraintsConstraiNetHead(torch.nn.Module):
@@ -42,8 +42,13 @@ class ConstraintsConstraiNetHead(torch.nn.Module):
     def _process_rules(self):
         A, b = make_A_b_binary(self.rules_cnf, self.concepts_enumeration)
         # self.c_layer = ConstraiNetLayer(constraints=[LinearConstraints(A=-A, b=-b)], mode='ray_shift')
-        self.c_layer = ConstraiNetLayer(constraints=[LinearConstraints(A=-A, b=-b)], mode='center_projection')
+        constraint_set = make_constraint_set([LinearConstraints(A=-A, b=-b)])
+        # constraint_set.interior_point = np.full_like(A[0], 0.5)
+        self.c_layer = ConstraiNetLayer(
+            constraints=constraint_set,
+            mode='center_projection',
+            length_limit=torch.inf,
+        )
 
     def forward(self, x: torch.Tensor) -> BinaryConceptsProbas:
         return self.c_layer(self.intermediate(self.linear(x)))
-
