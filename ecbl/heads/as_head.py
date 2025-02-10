@@ -24,7 +24,8 @@ class AdmissibleStatesHead(torch.nn.Module):
         self.outcomes_shape = list(concepts.values())
         self.in_features = in_features
         self.out_features = reduce(mul, self.outcomes_shape, 1)
-        self.placement_matrix = self._prepare_placement_matrix(prepare_admissible_states_mask(concepts, rules))
+        placement_matrix = self._prepare_placement_matrix(prepare_admissible_states_mask(concepts, rules))
+        self.register_buffer('placement_matrix', placement_matrix)
         n_valid_states = self.placement_matrix.shape[0]
         self.linear = torch.nn.Linear(self.in_features, n_valid_states)
         self.eps = 1.e-20

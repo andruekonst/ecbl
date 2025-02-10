@@ -20,6 +20,7 @@ try:
         LinearConstraints,
         ConstraiNetLayer,
     )
+    from constrainet.layers.fused.lc_qc_diameter import ZeroNaNGradientsFn
 except:
     warnings.warn('Cannot import constrainet, layer_type="constrainet" will not work')
 
@@ -44,7 +45,7 @@ def make_constraint_layer(concepts: Concepts, rules: Rules, layer_type, params: 
     with log_duration('make_all_constraints_without_eq', 'Converting to CNF, preparing_ineq, ...', logger=logger):
         A, b = make_all_constraints_without_eq(concepts, rules)
 
-    if isinstance(layer_type, callable):
+    if isinstance(layer_type, Callable):
         c_layer = layer_type(-A, -b, **params)
     elif isinstance(layer_type, str) and layer_type.lower() == 'vertex':
         with log_duration('constraints_to_vertex_repr', 'Finding polytope vertices', logger=logger):
@@ -88,7 +89,7 @@ class ConstraintsHead(torch.nn.Module):
 
     """
     def __init__(self, in_features: int, concepts: Concepts, rules: Rules,
-                 layer_type: LayerType = 'vertex',
+                 layer_type: LayerType = 'constrainet',
                  params: Optional[dict] = None):
         super().__init__()
         self.concepts = concepts
@@ -97,7 +98,7 @@ class ConstraintsHead(torch.nn.Module):
         self.shifts = torch.cumsum(torch.tensor([0] + self.outcomes_shape), 0)
         if params is None:
             params = dict()
-        self.c_layer, c_layer_n_inputs = self.make_constraint_layer(concepts, rules, layer_type, params)
+        self.c_layer, c_layer_n_inputs = make_constraint_layer(concepts, rules, layer_type, params)
         self.in_features = in_features
         self.linear = torch.nn.Linear(self.in_features, c_layer_n_inputs)
 
@@ -108,7 +109,7 @@ class ConstraintsHead(torch.nn.Module):
         }
 
     def forward(self, embeddings: torch.Tensor):
-        intermediate_probas = self.c_layer(self.linear(embeddings))
+        intermediate_probas = self.c_layer(ZeroNaNGradientsFn.apply(self.linear(embeddings)))
         concat_probas = reconstruct_solution_from_constr_without_eq(
             intermediate_probas,
             self.concepts
